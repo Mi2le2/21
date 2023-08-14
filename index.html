@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Slider</title>
+    <style>
+        #sliderContainer {
+            position: relative;
+            width: 300px;
+            height: 20px;
+            background-color: #f0f0f0;
+            margin-top: 20px;
+        }
+
+        #thumb {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            background-color: #0077ff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        #value {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="value">0</div>
+<div id="sliderContainer">
+    <div id="thumb"></div>
+</div>
+
+<script>
+    let thumb = document.getElementById('thumb');
+    let sliderContainer = document.getElementById('sliderContainer');
+    let value = document.getElementById('value');
+    let isMouseDown = false;
+
+    thumb.addEventListener('mousedown', (event) => {
+        isMouseDown = true;
+
+        let shiftX = event.clientX - thumb.getBoundingClientRect().left;
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        function onMouseMove(event) {
+            let newLeft = event.clientX - shiftX - sliderContainer.getBoundingClientRect().left;
+            
+            if (newLeft < 0) newLeft = 0;
+            if (newLeft > sliderContainer.offsetWidth - thumb.offsetWidth) {
+                newLeft = sliderContainer.offsetWidth - thumb.offsetWidth;
+            }
+
+            thumb.style.left = newLeft + 'px';
+
+            // Переводим положение бегунка в проценты и показываем пользователю
+            let percentage = Math.round((newLeft / (sliderContainer.offsetWidth - thumb.offsetWidth)) * 100);
+            value.textContent = percentage;
+        }
+
+        document.addEventListener('mouseup', () => {
+            isMouseDown = false;
+            document.removeEventListener('mousemove', onMouseMove);
+        });
+    });
+
+    thumb.addEventListener('dragstart', () => false);
+</script>
+
+</body>
+</html>
